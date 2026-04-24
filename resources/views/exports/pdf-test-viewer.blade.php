@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <style type="text/css">
+        body {
+            font-family: "Arial", sans-serif;
+            font-size: 12px;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        table {
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        tr th {
+            background: #eee;
+
+        }
+
+        .border-bottom {
+            border-bottom: 1px solid black;
+        }
+
+        @media print {
+            .page-break {
+                page-break-before: always;
+            }
+        }
+
+        caption {
+            text-align: left;
+        }
+
+        img {
+            margin-top: 10px;
+            margin-left: 40px;
+            height: 100px;
+            width: 100px;
+        }
+
+        .content-width {
+            padding-right: 45px;
+        }
+
+        .footer-width {
+            padding-right: 100px;
+        }
+
+        .footer-bottom {
+            padding-bottom: 125px;
+        }
+
+        #header {
+            margin-bottom: 10px;
+            margin-top: -25px
+        }
+    </style>
+</head>
+
+<body>
+    <table style="margin-top: 0px; margin-bottom: 25px;">
+        <tr>
+            <td width="15%">
+                <div>
+                    <img src="{{ public_path('images/logo-diponegoro.png')}}" style="margin-left: 0px; height: 8%">
+                </div>
+            </td>
+            <td width="67%">
+                <p style="font-size: 20px;text-align: center;"><b>LABORATORIUM KLINIK</b></p>
+                <p style="font-size: 22px;text-align: center;"><b>RUMKIT TK II dr. SOEDJONO</b></p>
+                <p style="font-size: 20px;text-align: center;"><b>MAGELANG</b></p>
+                <font size="3">
+                    <p align="center" style="font-size: 14px;">Jl. Urip Sumoharjo 48 Telp. (0293) 363061</p>
+                    <p align="center" style="font-size: 14px;">Fax. (0293) 363366 Magelang</p>
+                </font>
+            </td>
+            <td width="18%">
+                <div>
+                    <img src="{{ public_path('images/logo-hesti-wira-sakti.png')}}"
+                        style="margin-left: 0px; height: 8%">
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <center>
+        <h3 style="margin-bottom: -5px; margin-top : -15px;">HASIL PEMERIKSAAN LABORATORIUM</h3>
+    </center>
+
+    <hr style="border: 1px solid black">
+
+    <table>
+        <tbody>
+            <tr>
+                <td style="text-align: left; width: 15%;">Nama Pasien</td>
+                <td style="text-align: left; width: 40%;">: <b> {{ $transaction->patient_name }} </b> </td>
+                <td style="text-align: left;">No. RM/ No Lab</td>
+                <td style="text-align: left;">: <b>{{$transaction->patient_medrec}} / {{$transaction->no_lab}}</b></td>
+            </tr>
+            <tr>
+                <td style="text-align: left;">Tgl Lahir (Umur)</td>
+                <td style="text-align: left;">:
+                    <?= date('d/m/Y',  strtotime($transaction->patient_birthdate)); ?> ({{$age}})
+                </td>
+                <td style="text-align: left; width: 15%;">Tanggal </b></td>
+                <td style="text-align: left; width: 30%;">:
+                    <?= date('d/m/Y', strtotime($transaction->checkin_time)); ?>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: left;">Jenis Kelamin </td>
+                @if ($transaction->patient_gender == 'M')
+                <td style="text-align: left;">: Laki-laki</td>
+                @elseif ($transaction->patient_gender == 'F')
+                <td style="text-align: left;">: Perempuan</td>
+                @endif
+                <td style="text-align: left;">Dokter Pengirim </td>
+                <td style="text-align: left;">: {{ $transaction->doctor_name }}</td>
+            </tr>
+            <tr>
+                <td style="text-align: left;">Alamat Pasien</td>
+                <td style="text-align: left;">: {{ $transaction->patient_address }}</td>
+                <td style="text-align: left;">Asal Ruangan</td>
+                <td style="text-align: left;">: {{ $transaction->room_name }}</td>
+            </tr>
+            <tr>
+                <td style="text-align: left;">Diagnosis Kerja </td>
+                <td style="text-align: left;">: {{ $transaction->note }} </td>
+                <td style="text-align: left;">Status Klaim </td>
+                <td style="text-align: left;">: {{ $transaction->insurance_name }} </td>
+            </tr>
+            <tr>
+                <td style="text-align: left;">Penanggungjawab</td>
+                <td style="text-align: left;">: dr. Inge Kusumaningdiyah,Sp.PK </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table>
+        <tr>
+            <td style="text-align: right;">Cetakan ke : {{$transaction->print}}</td>
+        </tr>
+    </table>
+
+    <hr style="border: 1px solid black">
+
+    <table id="tb_result" width="100%" style="border-bottom: 1px solid black; table-layout: fixed;">
+        <thead>
+            <tr>
+                <th class="border-bottom" id="content" style="text-align: left; padding-left:15px; width:25%;">JENIS
+                    PEMERIKSAAN</th>
+                <th class="border-bottom" id="content" style="width:5%;"></th>
+                <th class="border-bottom" id="content" style="text-align: left; width:15%;">HASIL</th>
+                <th class="border-bottom" id="content" style="text-align: left; width:20%;">NILAI RUJUKAN</th>
+                <th class="border-bottom" id="content" style="text-align: left; width:10%;">SATUAN</th>
+                <th class="border-bottom" id="content" style="text-align: left; width:15%;">KETERANGAN</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <?php
+                $group_test = '';
+                $sub_group = '';
+                $package_name = '';
+                $new_page = 0;
+                $row = 0;
+                $line = 0;
+                $jumlah_test = count($tests);
+
+                $line_map = [
+                    14 => 37,
+                    16 => 35,
+                    23 => 50,
+                    25 => 47,
+                    28 => 56,
+                    34 => 65,
+                    36 => 68,
+                    37 => 70,
+                    39 => 69,
+                    42 => 73,
+                    47 => 75,
+                    50 => 80,
+                    54 => 84,
+                    60 => 90
+                ];
+                
+                $line = 91;
+
+                foreach ($line_map as $max_test => $val_line) {
+                    if ($jumlah_test <= $max_test) {
+                        $line = $val_line;
+                        break;
+                    }
+                }
+            
+                $page = 1; ?>
+
+            @foreach ($tests as $test)
+            <?php $hitung;
+                ?>
+            @if($jumlah_test + $row >= $line )
+            <?php $row = 0; ?>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <table>
+        <tbody>
+            <tr>
+                <!-- <td style="text-align: right;"> Hal.  {{ $jumlah_test }}</td> -->
+            </tr>
+        </tbody>
+    </table>
+
+    <?php $page++; ?>
+
+    <table class="page-break" style="margin-top: 0px; margin-bottom: 25px;">
+        <tr>
+            <td width="15%">
+                <div>
+                    <img src="{{ public_path('images/logo-diponegoro.png')}}" style="margin-left: 0px; height: 8%">
+                </div>
+            </td>
+            <td width="67%">
+                <p style="font-size: 20px;text-align: center;"><b>LABORATORIUM KLINIK</b></p>
+                <p style="font-size: 22px;text-align: center;"><b>RUMKIT TK II dr. SOEDJONO</b></p>
+                <p style="font-size: 20px;text-align: center;"><b>MAGELANG</b></p>
+                <font size="3">
+                    <p align="center" style="font-size: 14px;">Jl. Urip Sumoharjo 48 Telp. (0293) 363061</p>
+                    <p align="center" style="font-size: 14px;">Fax. (0293) 363366 Magelang</p>
+                </font>
+            </td>
+            <td width="18%">
+                <div>
+                    <img src="{{ public_path('images/logo-hesti-wira-sakti.png')}}"
+                        style="margin-left: 0px; height: 8%">
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <center>
+        <h3 style="margin-bottom: -5px; margin-top : -15px;">HASIL PEMERIKSAAN LABORATORIUM</h3>
+    </center>
+
+    <hr style="border: 1px solid black">
+
+    <table>
+        <tbody>
+            <tr>
+                <td style="text-align: left; width: 15%;">Nama Pasien</td>
+                <td style="text-align: left; width: 40%;">: <b> {{ $transaction->patient_name }} </b> </td>
+                <td style="text-align: left;">No. RM/ No Lab</td>
+                <td style="text-align: left;">: <b>{{$transaction->patient_medrec}} / {{$transaction->no_lab}}</b>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: left;">Tgl Lahir (Umur)</td>
+                <td style="text-align: left;">:
+                    <?= date('d/m/Y',  strtotime($transaction->patient_birthdate)); ?> ({{$age}})
+                </td>
+                <td style="text-align: left; width: 15%;">Tanggal </b></td>
+                <td style="text-align: left; width: 30%;">:
+                    <?= date('d/m/Y', strtotime($transaction->checkin_time)); ?>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: left;">Jenis Kelamin </td>
+                @if ($transaction->patient_gender == 'M')
+                <td style="text-align: left;">: Laki-laki</td>
+                @elseif ($transaction->patient_gender == 'F')
+                <td style="text-align: left;">: Perempuan</td>
+                @endif
+                <td style="text-align: left;">Dokter Pengirim </td>
+                <td style="text-align: left;">: {{ $transaction->doctor_name }}</td>
+            </tr>
+            <tr>
+                <td style="text-align: left;">Alamat Pasien</td>
+                <td style="text-align: left;">: {{ $transaction->patient_address }}</td>
+                <td style="text-align: left;">Asal Ruangan</td>
+                <td style="text-align: left;">: {{ $transaction->room_name }}</td>
+            </tr>
+            <tr>
+                <td style="text-align: left;">Diagnosis Kerja </td>
+                <td style="text-align: left;">: {{ $transaction->note }} </td>
+                <td style="text-align: left;">Status Klaim </td>
+                <td style="text-align: left;">: {{ $transaction->insurance_name }} </td>
+            </tr>
+            <tr>
+                <td style="text-align: left;">Penanggungjawab</td>
+                <td style="text-align: left;">: dr. Inge Kusumaningdiyah,Sp.PK </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table>
+        <tr>
+            <td style="text-align: right;">Cetakan ke : {{$transaction->print}}</td>
+        </tr>
+    </table>
+
+    <hr style="border: 1px solid black">
+
+    <table id="tb_result" style="border-bottom: 1px solid black; width: 100%; table-layout: fixed;">
+        <tr>
+            <th class="border-bottom" id="content" style="text-align: left; padding-left:15px; width:25%;">JENIS
+                PEMERIKSAAN</th>
+            <th class="border-bottom" id="content" style="width:5%;"></th>
+            <th class="border-bottom" id="content" style="text-align: left; width:15%;">HASIL</th>
+            <th class="border-bottom" id="content" style="text-align: left; width:20%;">NILAI RUJUKAN</th>
+            <th class="border-bottom" id="content" style="text-align: left; width:10%;">SATUAN</th>
+            <th class="border-bottom" id="content" style="text-align: left; width:15%;">KETERANGAN</th>
+        </tr>
+        </thead>
+        <?php $new_page = 1; ?>
+        @endif
+        @if (($group_test == '')||($group_test != $test->group_name))
+        <?php $group_test = $test->group_name; ?>
+
+        <tr id="content">
+            <td style="padding-left:15px; padding-bottom: 5px; padding-top: 1rem"><span
+                    style="font-size:10px; font-style: italic; font-weight: bold">{{ $test->group_name }}</span>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <?php $row++; ?>
+
+        @endif
+
+        @if($test->print_package_name == 1)
+        @if (($package_name == '')||($package_name != $test->package_name))
+        <?php $package_name = $test->package_name; ?>
+
+        <tr id="content">
+            <td style="padding-left:15px; padding-bottom: 5px;"><span style="font-size:10px; font-weight: bold">{{
+                    $test->package_name }}</span></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <?php $row++; ?>
+
+        @endif
+        @endif
+
+
+        @if (($sub_group == '')||($sub_group != $test->sub_group))
+        @if ($test->sub_group != '')
+        <tr id="content">
+            <td style="padding-left:25px; padding-bottom: 3px;"><span style="font-size:10px;font-weight: bold">{{
+                    $test->sub_group }}</span></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <?php $row++; ?>
+
+        @endif
+        <?php $sub_group = $test->sub_group; ?>
+
+        @endif
+
+        <tr id="content">
+
+            <!-- td test name -->
+            @if ($sub_group == '')
+            <td id="content" valign="center" style="padding-left:35px; padding-bottom: 1px;">{{ $test->test_name }}
+            </td>
+            @else
+            <td id="content" valign="center" style="padding-left:35px; padding-bottom: 1px;">{{ $test->test_name }}
+            </td>
+            @endif
+            <!-- end td test name -->
+
+            <!-- td flagging  -->
+            @if ($test->result_status_label == 'Critical')
+            <td id="content" style="text-align: right; padding-bottom: 3px;">**</td>
+            @elseif ($test->result_status_label == 'Abnormal')
+            <td id="content" style="text-align: right; padding-bottom: 3px;">*</td>
+            @elseif ($test->result_status_label == 'Normal')
+            <td id="content" style="text-align: right; padding-bottom: 3px;"></td>
+            @else
+            <td id="content" style="text-align: right; padding-bottom: 3px;"></td>
+            @endif
+            <!-- end td flagging -->
+
+            <?php
+                $result = $test->global_result;
+
+                if (is_string($test->global_result)) {
+
+                    // $result = str_replace(" ; ","<br>",$test->global_result ); 
+                    $result = $test->global_result;
+                }
+                ?>
+
+            <!-- td result -->
+            @if (strlen($test->global_result) > 15)
+            @if ($test->normal_value == '' && $test->unit == '')
+            <td colspan="4" id="content" style="text-align: left; padding-bottom: 1px; font-size: 15x;">{!! $result
+                !!}
+            </td>
+            @else
+            <td id="content" style="text-align: left; padding-bottom: 1px;">{!! $result !!}</td>
+            @endif
+            <?php $row = $row + 4; ?>
+            @else
+            <td id="content" style="text-align: left; padding-bottom: 1px;">{!! $result !!}</td>
+            @endif
+            <!-- end td result -->
+
+            <td id="content" style="text-align: left; padding-bottom: 3px;">{!! $test->normal_value !!}</td>
+            <td id="content" style="text-align: left; padding-bottom: 3px;">{{ $test->unit }}</td>
+
+            <td id="content"
+                style="text-align: left; word-wrap: break-word; white-space: normal; word-break: break-word;">
+                <?php
+                  if($test->result_status_label == 'Critical'){
+                      echo 'Hasil kritis dilaporkan oleh ' . $test->report_by . ' kepada ' . $test->report_to . ' (' . date('H:i', strtotime($test->report_time)) . ')' . '<br>';
+                      echo '<b>' . 'Keterangan : ' . '</b>' . $test->memo_test;
+                  } elseif ($test->mark_duplo != 0) {
+                      echo 'Duplo';
+                  }
+                  else{
+                      echo $test->memo_test;
+                  }
+                  ?>
+            </td>
+
+        </tr>
+
+        <?php $row++; ?>
+        @endforeach
+        </tbody>
+    </table>
+
+    <br>
+
+    <table>
+        <tbody>
+            @if($transaction->is_print_memo != '')
+            <tr>
+                <td style="text-align: left;">Keterangan :</td>
+            </tr>
+            <tr>
+                <td style="text-align: left;">
+                    <?php
+                        if ($transaction->memo_result == 'hivpos') {
+                            $keterangan = [];
+                            if (($open = fopen(storage_path() . "/csv/hivpos.csv", "r")) !== FALSE) {
+                                while (($data = fgetcsv($open, ",")) !== FALSE) {
+                                    $keterangan[] = $data;
+                                }
+                                fclose($open);
+                            }
+                            foreach ($keterangan as $value) {
+                                echo $value[0] . "<br>";
+                            }
+                        } else if($transaction->memo_result == 'covid19'){
+                            $keterangan = [];
+                            if (($open = fopen(storage_path() . "/csv/covid19.csv", "r")) !== FALSE) {
+                                while (($data = fgetcsv($open, ",")) !== FALSE) {
+                                    $keterangan[] = $data;
+                                }
+                                fclose($open);
+                            }
+                            foreach ($keterangan as $value) {
+                                echo $value[0] . "<br>";
+                            }
+                        } else if($transaction->memo_result == 'covid19AGD1'){
+                            $keterangan = [];
+                            if (($open = fopen(storage_path() . "/csv/covid19AGD1.csv", "r")) !== FALSE) {
+                                while (($data = fgetcsv($open, ",")) !== FALSE) {
+                                    $keterangan[] = $data;
+                                }
+                                fclose($open);
+                            }
+                            foreach ($keterangan as $value) {
+                                echo $value[0] . "<br>";
+                            }
+                        }else if($transaction->memo_result == 'covid19gen'){
+                            $keterangan = [];
+                            if (($open = fopen(storage_path() . "/csv/covid19gen.csv", "r")) !== FALSE) {
+                                while (($data = fgetcsv($open, ",")) !== FALSE) {
+                                    $keterangan[] = $data;
+                                }
+                                fclose($open);
+                            }
+                            foreach ($keterangan as $value) {
+                                echo $value[0] . "<br>";
+                            }
+                        }else if($transaction->memo_result == 'covid19-nonreact'){
+                            $keterangan = [];
+                            if (($open = fopen(storage_path() . "/csv/covid19-nonreact.csv", "r")) !== FALSE) {
+                                while (($data = fgetcsv($open, ",")) !== FALSE) {
+                                    $keterangan[] = $data;
+                                }
+                                fclose($open);
+                            }
+                            foreach ($keterangan as $value) {
+                                echo $value[0] . "<br>";
+                            }
+                        }else if($transaction->memo_result == 'covid19-react'){
+                            $keterangan = [];
+                            if (($open = fopen(storage_path() . "/csv/covid19-react.csv", "r")) !== FALSE) {
+                                while (($data = fgetcsv($open, ",")) !== FALSE) {
+                                    $keterangan[] = $data;
+                                }
+                                fclose($open);
+                            }
+                            foreach ($keterangan as $value) {
+                                echo $value[0] . "<br>";
+                            }
+                        }else if($transaction->memo_result == 'negatif'){
+                            $keterangan = [];
+                            if (($open = fopen(storage_path() . "/csv/negatif.csv", "r")) !== FALSE) {
+                                while (($data = fgetcsv($open, ",")) !== FALSE) {
+                                    $keterangan[] = $data;
+                                }
+                                fclose($open);
+                            }
+                            foreach ($keterangan as $value) {
+                                echo $value[0] . "<br>";
+                            }
+                        }else if($transaction->memo_result == 'positif'){
+                            $keterangan = [];
+                            if (($open = fopen(storage_path() . "/csv/positif.csv", "r")) !== FALSE) {
+                                while (($data = fgetcsv($open, ",")) !== FALSE) {
+                                    $keterangan[] = $data;
+                                }
+                                fclose($open);
+                            }
+                            foreach ($keterangan as $value) {
+                                echo $value[0] . "<br>";
+                            }
+                        }else if($transaction->memo_result == 'covid19neg'){
+                            $keterangan = [];
+                            if (($open = fopen(storage_path() . "/csv/covid19neg.csv", "r")) !== FALSE) {
+                                while (($data = fgetcsv($open, ",")) !== FALSE) {
+                                    $keterangan[] = $data;
+                                }
+                                fclose($open);
+                            }
+                            foreach ($keterangan as $value) {
+                                echo $value[0] . "<br>";
+                            }
+                        }else if($transaction->memo_result == 'covid19pos'){
+                            $keterangan = [];
+                            if (($open = fopen(storage_path() . "/csv/covid19pos.csv", "r")) !== FALSE) {
+                                while (($data = fgetcsv($open, ",")) !== FALSE) {
+                                    $keterangan[] = $data;
+                                }
+                                fclose($open);
+                            }
+                            foreach ($keterangan as $value) {
+                                echo $value[0] . "<br>";
+                            }
+                        } else {
+                            echo $transaction->memo_result;
+                        }
+                        ?>
+                </td>
+            </tr>
+            @endif
+
+        </tbody>
+    </table>
+
+    <table>
+        <tbody>
+            <tr>
+                <td style="text-align: left; font-size: 10px; width: 19%;"> Jam Pengambilan Sample </td>
+                <td style="text-align: left; font-size: 10px; width: 20%;"> :
+                    <?= date('d/m/Y H:i', strtotime($transaction->checkin_time)); ?>
+                </td>
+                <td style="text-align: left; width: 25%;"> </td>
+                <td style="text-align: left; width: 25%;"> </td>
+            </tr>
+            <tr>
+                <td style="text-align: left; font-size: 10px; width: 19%;"> Jam Cetak Hasil </td>
+                <td style="text-align: left; font-size: 10px; width: 20%;"> :
+                    <?= date('d/m/Y H:i', strtotime($print_time)); ?>
+                </td>
+                <td style="text-align: left; width: 25%;"> </td>
+                <td style="text-align: left; width: 25%;"> </td>
+            </tr>
+            <tr>
+                <td style="text-align: left; font-size: 10px; width: 19%;"> Printed by </td>
+                <td style="text-align: left; font-size: 10px; width: 20%;"> :{{ $print_by }}</td>
+                <td style="text-align: left; width: 25%;"> </td>
+                <td style="text-align: left; width: 25%;"> </td>
+            </tr>
+            <tr>
+                <td style="text-align: left; font-size: 12px; width: 25%;"> <i>( * ) Abnormal, ( ** ) Nilai
+                        Kritis</i>
+                </td>
+                <td style="text-align: left; font-size: 12px; width: 25%;"> </td>
+                <td style="text-align: left; width: 25%;"> </td>
+                <td style="text-align: left; width: 25%;"> </td>
+            </tr>
+        </tbody>
+    </table>
+
+    {{-- <table style="position: absolute; top: 60%; right: 0; left: 0;">
+        <tbody>
+            <tr>
+                <td width="70%" style="text-align: right;"> </td>
+                <td width="30%" style="text-align: center;">Magelang,
+                    <?= date('d/m/Y', strtotime($print_time)); ?>
+                </td>
+            </tr>
+            <tr>
+                <td width="70%" style="text-align: right;"> </td>
+                <td width="30%" style="text-align: center;">Validator</td>
+            </tr>
+            <tr>
+                <td width="35%" style="text-align: center;"></td>
+                <td width="15%" style="text-align: right;"></td>
+                <td width="15%" style="text-align: center;"></td>
+                <td width="15%" style="text-align: center;">
+                    @if ($transaction->validator_name === 'dr. Muslim Argo Bayu K, MGizi, SpMK')
+                    <img src="{{ public_path('images/barcode_dr_argo.png')}}" style="height: 10%;">
+                    @else
+                    <img src="{{ public_path('images/barcode_dr_inge.jpeg')}}" style="height: 10%;">
+                    @endif
+                </td>
+            </tr>
+            <tr>
+                <td width="70%" style="text-align: right;"> </td>
+                @if ($transaction->validator_name === 'dr. Muslim Argo Bayu K, MGizi, SpMK')
+                <td width="30%" style="text-align: center;">
+                    <br><br>
+                    dr. Muslim Argo Bayu K, MGizi, SpMK
+                </td>
+                @else
+                <td width="30%" style="text-align: center;">
+                    <br><br>
+                    dr. Inge Kusumaningdiyah, Sp.PK
+                </td>
+                @endif
+            </tr>
+        </tbody>
+    </table> --}}
+
+    <table style="position: absolute; top: 55%; text-align: center; margin-left: 40%;">
+        <tr>
+            <td>
+                Magelang,
+                <?= date('d/m/Y', strtotime($print_time)); ?>
+            </td>
+        </tr>
+        <tr>
+            <td>Validator</td>
+        </tr>
+
+        <tr>
+            <td>
+                @if ($transaction->validator_name === 'dr. Muslim Argo Bayu K, MGizi, SpMK')
+                <img src="{{ public_path('images/barcode_dr_argo.png')}}" style="width: 100px;">
+                @else
+                <img src="{{ public_path('images/barcode_dr_inge.jpeg')}}" style="width: 100px;">
+                @endif
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding-top: 10px;">
+                @if ($transaction->validator_name === 'dr. Muslim Argo Bayu K, MGizi, SpMK')
+                dr. Muslim Argo Bayu K, MGizi, SpMK
+                @else
+                dr. Inge Kusumaningdiyah, Sp.PK
+                @endif
+            </td>
+        </tr>
+    </table>
+
+</body>
+
+</html>
