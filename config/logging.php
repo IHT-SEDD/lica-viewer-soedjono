@@ -106,4 +106,20 @@ return [
         ]
     ],
 
+    /*
+    /
+    /-------------------------------------------------------------------------------
+    /deprecations
+    /-------------------------------------------------------------------------------
+    /
+    /
+    */
+
+    'deprecations' => env('LOG_DEPRECATIONS_CHANNEL', 'null'),
+
+    'null' => [
+        'driver' => 'monolog',
+        'handler' => Monolog\Handler\NullHandler::class,
+    ],
+
 ];

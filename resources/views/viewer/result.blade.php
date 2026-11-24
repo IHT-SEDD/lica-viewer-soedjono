@@ -27,7 +27,7 @@
   <div class="px-10" id="kt_docs_content_container">
     <!--begin::Back to portal access-->
     <div>
-      <a href={{ url('/viewer') }} class="btn btn-primary btn-sm mb-2" id="back-to-portal-access-btn">
+      <a href={{ url('/') }} class="btn btn-primary btn-sm mb-2" id="back-to-portal-access-btn">
         Back to portal access
       </a>
     </div>

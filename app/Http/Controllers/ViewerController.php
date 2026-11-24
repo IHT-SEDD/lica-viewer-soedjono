@@ -142,7 +142,7 @@ class ViewerController extends Controller
                 $patientResultData->where('ftt.group_id', '=', $group_id);
             }
 
-            $patientResultData->orderBy('ft.post_time', 'asc');
+            $patientResultData->orderBy('ft.post_time', 'desc');
             $patientResultData->groupBy('ftt.finish_transaction_id');
 
             return DataTables::of($patientResultData)
